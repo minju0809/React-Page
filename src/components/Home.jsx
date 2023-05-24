@@ -6,7 +6,7 @@ const Home = () => {
   const toggleNav = () => {
     document.body.classList.toggle("open-nav");
   };
-  
+
   return (
     <>
       <header>
@@ -14,7 +14,7 @@ const Home = () => {
         <button id="toggleBtn" onClick={toggleNav}>
           &#9776;
         </button>
-        <nav id="navbar">
+        <nav id="Home_navbar">
           <ul>
             <li>
               <Link to="/notice">공지사항</Link>

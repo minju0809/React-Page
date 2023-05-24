@@ -5,8 +5,8 @@
   --main-font-color: #000;
   --section-font-color: #fff;
 
-  --font-size-large: 24px; 
-  --font-size-medium: 20px; 
+  --font-size-large: 24px;
+  --font-size-medium: 20px;
   --font-size-small: 16px;
   --font-size-xsmall: 12px;
 }
@@ -24,6 +24,7 @@ header {
   color: var(--main-font-color);
   padding: 8px 20px;
   display: flex;
+  justify-content: space-around;
   align-items: center;
 }
 
@@ -35,8 +36,6 @@ nav ul {
   width: 100%;
   list-style-type: none;
   padding: 0;
-  /* display: flex; */
-  /* justify-content: center; */
 }
 
 nav ul li {
@@ -61,13 +60,55 @@ nav ul li a {
 /* 섹션 스타일 */
 section {
   color: var(--section-font-color);
-  padding: 20px;
+  padding: 4px;
   margin-bottom: 20px;
-  background: linear-gradient(to left, rgb(192, 144, 109), rgb(204, 182, 166), rgb(192, 144, 109));
+  background: linear-gradient(
+    to left,
+    rgb(192, 144, 109),
+    rgb(204, 182, 166),
+    rgb(192, 144, 109)
+  );
 }
 
 section h2 {
   margin-top: 0;
+}
+
+#Shop_navbar {
+  border-bottom: 2px solid rgb(250, 244, 244);
+}
+
+.nav-list {
+  display: flex;
+}
+
+.nav-item {
+  display: flex;
+  justify-content: center;
+}
+
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.product-card {
+  /* border: 1px solid #fff; */
+  width: calc(25% - 10px); /* 4개의 카드를 한 줄에 배치하기 위한 너비 설정 */
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* 그림자 효과 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.product-card:hover {
+  /* 마우스를 올렸을 때의 스타일 변경 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* 푸터 스타일 */
@@ -84,10 +125,10 @@ footer {
     width: 20%;
   }
 
-  #navbar {
+  #Home_navbar {
     width: 80%;
     /* width: auto; */
-    /* position: static; */
+    position: static;
     height: auto;
     background-color: transparent;
     padding: 0;
@@ -110,7 +151,7 @@ footer {
     justify-content: space-between;
   }
 
-  #navbar {
+  #Home_navbar {
     top: 50px;
     right: -100%;
     width: 250px;
@@ -127,7 +168,21 @@ footer {
     display: block;
   }
 
-  body.open-nav #navbar {
+  body.open-nav #Home_navbar {
     right: 0;
+  }
+
+  .product-card {
+    width: calc(
+      33.33% - 10px
+    ); /* 화면이 작아질 때 3개의 카드를 한 줄에 배치하기 위한 너비 설정 */
+  }
+}
+
+@media (max-width: 576px) {
+  .product-card {
+    width: calc(
+      50% - 10px
+    ); /* 화면이 아주 작아질 때 2개의 카드를 한 줄에 배치하기 위한 너비 설정 */
   }
 }
