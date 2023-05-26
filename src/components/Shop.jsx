@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import shopData from "../data/shopData";
 
 const Shop = () => {
@@ -63,6 +63,13 @@ const Shop = () => {
     return shopData.filter(filterCondition);
   };
 
+  // const navigate = useNavigate();
+
+  // const handleProductClick = (productId) => {
+  //   // 상세 페이지 URL을 생성하여 이동
+  //   navigate(`/Shop/${productId}`);
+  // };
+
   return (
     <div>
       <header>
@@ -103,11 +110,17 @@ const Shop = () => {
         <section className="product-list">
           {getFilteredProducts().length > 0 ? (
             getFilteredProducts().map((product, i) => (
-              <div key={i} className="product-card">
-                <img src={product.image} alt="상품 이미지" />
-                <h3 className="product-title">{product.title}</h3>
-                <p className="product-price">{product.price}</p>
-              </div>
+              <Link
+                key={i}
+                to={`/Shop/products/${product.id}`}
+                className="product-card"
+              >
+                <div>
+                  <img src={product.image} alt="상품 이미지" />
+                  <h3 className="product-title">{product.title}</h3>
+                  <p className="product-price">{product.price}</p>
+                </div>
+              </Link>
             ))
           ) : (
             <p>필터된 상품이 없습니다.</p>

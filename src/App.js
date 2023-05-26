@@ -7,6 +7,7 @@ import Gym from "./components/Gym";
 import Shop from "./components/Shop";
 import Review from "./components/Review";
 import MyPage from "./components/MyPage";
+import ShopDetail from "./components/ShopDetail/ShopDetail"
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/Photo" element={<Photo />} />
         <Route path="/Gym" element={<Gym />} />
         <Route path="/Shop" element={<Shop />} />
+        <Route path="/Shop/products/:productId" element={<ShopDetail />} />
         <Route path="/Review" element={<Review />} />
         <Route path="/MyPage" element={<MyPage />} />
       </Routes>
