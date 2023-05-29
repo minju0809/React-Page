@@ -1,25 +1,17 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import shopData from "../data/shopData";
+import ProductCard from "./ProductCard";
 
 const Shop = () => {
   const [clickedText, setClickedText] = useState(""); // 클릭한 글자 상태
   const [showAllItem, setShowAllItem] = useState(false); // 첫 화면에서는 전체 상품 보이도록 설정
   const [filterByCategory, setFilterByCategory] = useState("전체상품"); // 카테고리 필터 상태
+  const [favorites, setFavorites] = useState([]); // 즐겨찾기 목록을 저장할 배열
 
   const handleClick = (text) => {
     setClickedText(text); // 클릭한 글자를 상태에 저장
   };
-
-  // const toggleShowAllItem = () => {
-  //   setShowAllItem(!showAllItem);
-  //   setFilterByCategory("전체상품"); // 필터 초기화
-  // };
-
-  // const handleCategoryFilter = (category) => {
-  //   setShowAllItem(false);
-  //   setFilterByCategory(category);
-  // };
 
   const handleFilter = (category) => {
     if (category === "전체상품") {
@@ -33,18 +25,18 @@ const Shop = () => {
     }
   };
 
-  // // 카테고리로 필터된 상품 목록 생성 함수
-  // const getFilteredProducts = () => {
-  //   if (showAllItem || filterByCategory === "전체 상품") {
-  //     return shopData; // 전체 상품
-  //   } else if (filterByCategory === "라켓") {
-  //     return shopData.filter((product) => product.title.includes("라켓")); // '라켓'이 들어간 상품
-  //   } else if (filterByCategory === "의류") {
-  //     return shopData.filter((product) => product.title.includes("의류")); // '의류'가 들어간 상품
-  //   } else {
-  //     return []; // 필터된 상품 없음
-  //   }
-  // };
+  const handleFavorite = (productId) => {
+    setFavorites((prevFavorites) => {
+      const isFavorite = prevFavorites.includes(productId);
+      if (isFavorite) {
+        // 이미 즐겨찾기에 있는 상품인 경우 제거
+        return prevFavorites.filter((id) => id !== productId);
+      } else {
+        // 현재 즐겨찾기에 없는 상품인 경우 추가
+        return [...prevFavorites, productId];
+      }
+    });
+  };
 
   // 카테고리와 필터 조건을 정의한 객체
   const categoryFilters = {
@@ -57,18 +49,36 @@ const Shop = () => {
     용품: (product) => product.title.includes("용품"), // '용품'이 들어간 상품
   };
 
-  // 카테고리로 필터된 상품 목록 생성 함수
   const getFilteredProducts = () => {
-    const filterCondition = categoryFilters[filterByCategory] || (() => false); // 선택된 카테고리에 해당하는 필터 함수
+    const filterCondition = categoryFilters[filterByCategory] || (() => false);
     return shopData.filter(filterCondition);
   };
 
-  // const navigate = useNavigate();
+  const getFavoriteProducts = () => {
+    const filterCondition = categoryFilters[filterByCategory] || (() => false);
+    const filteredProducts = shopData.filter(filterCondition);
 
-  // const handleProductClick = (productId) => {
-  //   // 상세 페이지 URL을 생성하여 이동
-  //   navigate(`/Shop/${productId}`);
-  // };
+    if (filterByCategory === "즐겨찾기") {
+      return filteredProducts.filter((product) =>
+        favorites.includes(product.id)
+      );
+    }
+
+    return filteredProducts;
+  };
+
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favorites");
+    if (storedFavorites) {
+      setFavorites(JSON.parse(storedFavorites));
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("favorites", favorites);
+    if (favorites.length !== 0)
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   return (
     <div>
@@ -102,29 +112,32 @@ const Shop = () => {
           <li className="nav-item" onClick={() => handleFilter("용품")}>
             용품
           </li>
+          <li className="nav-item" onClick={() => handleFilter("즐겨찾기")}>
+            즐겨찾기
+          </li>
         </ul>
       </nav>
 
       <main className="main">
         <h2 className="section-title">{clickedText}</h2>
         <section className="product-list">
-          {getFilteredProducts().length > 0 ? (
-            getFilteredProducts().map((product, i) => (
-              <Link
-                key={i}
-                to={`/Shop/products/${product.id}`}
-                className="product-card"
-              >
-                <div>
-                  <img src={product.image} alt="상품 이미지" />
-                  <h3 className="product-title">{product.title}</h3>
-                  <p className="product-price">{product.price}</p>
-                </div>
-              </Link>
-            ))
-          ) : (
-            <p>필터된 상품이 없습니다.</p>
-          )}
+          {filterByCategory === "즐겨찾기"
+            ? getFavoriteProducts().map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  handleFavorite={handleFavorite}
+                  isFavorite={favorites.includes(product.id)}
+                />
+              ))
+            : getFilteredProducts().map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  handleFavorite={handleFavorite}
+                  isFavorite={favorites.includes(product.id)}
+                />
+              ))}
         </section>
       </main>
     </div>
