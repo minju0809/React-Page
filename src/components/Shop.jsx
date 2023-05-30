@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+// import axios from "axios";
 import shopData from "../data/shopData";
 import ProductCard from "./ProductCard";
 
@@ -8,6 +9,11 @@ const Shop = () => {
   const [showAllItem, setShowAllItem] = useState(false); // 첫 화면에서는 전체 상품 보이도록 설정
   const [filterByCategory, setFilterByCategory] = useState("전체상품"); // 카테고리 필터 상태
   const [favorites, setFavorites] = useState([]); // 즐겨찾기 목록을 저장할 배열
+
+  // useEffect(() => {
+  //   // 즐겨찾기 목록 가져오기
+  //   fetchFavorites();
+  // }, []);
 
   const handleClick = (text) => {
     setClickedText(text); // 클릭한 글자를 상태에 저장
@@ -38,6 +44,40 @@ const Shop = () => {
     });
   };
 
+  // const handleFavorite = async (productId) => {
+  //   const isFavorite = favorites.includes(productId);
+  //   let updatedFavorites;
+
+  //   if (isFavorite) {
+  //     // 이미 즐겨찾기에 있는 상품인 경우 제거
+  //     updatedFavorites = favorites.filter((id) => id !== productId);
+  //   } else {
+  //     // 현재 즐겨찾기에 없는 상품인 경우 추가
+  //     updatedFavorites = [...favorites, productId];
+  //   }
+
+  //   setFavorites(updatedFavorites);
+
+  //   try {
+  //     // 즐겨찾기 목록 업데이트
+  //     await axios.post("/api/favorites", { favorites: updatedFavorites });
+  //   } catch (error) {
+  //     console.error("Failed to update favorites:", error);
+  //   }
+  // };
+
+  // const fetchFavorites = async () => {
+  //   try {
+  //     // 서버에서 즐겨찾기 목록 가져오기
+  //     const response = await axios.get("/api/favorites");
+  //     const favoritesData = response.data.favorites;
+  //     setFavorites(favoritesData);
+  //   } catch (error) {
+  //     console.error("Failed to fetch favorites:", error);
+  //   }
+  // };
+
+
   // 카테고리와 필터 조건을 정의한 객체
   const categoryFilters = {
     전체상품: () => true, // 모든 상품
@@ -47,6 +87,7 @@ const Shop = () => {
     신발: (product) => product.title.includes("신발"), // '신발'이 들어간 상품
     셔틀콕: (product) => product.title.includes("셔틀콕"), // '셔틀콕'이 들어간 상품
     용품: (product) => product.title.includes("용품"), // '용품'이 들어간 상품
+    즐겨찾기: (product) => favorites.includes(product.id), // '즐겨찾기' 상품
   };
 
   const getFilteredProducts = () => {
@@ -67,27 +108,14 @@ const Shop = () => {
     return filteredProducts;
   };
 
-  useEffect(() => {
-    const storedFavorites = localStorage.getItem("favorites");
-    if (storedFavorites) {
-      setFavorites(JSON.parse(storedFavorites));
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log("favorites", favorites);
-    if (favorites.length !== 0)
-      localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
-
   return (
     <div>
       <header>
         {/* 페이지로 돌아가기 위한 링크 */}
-        <Link to="/">홈으로</Link>
-        <h2>상점</h2>
+        <Link to="/">Home</Link>
+        <h2>Shop</h2>
         <input></input>
-        <button>검색</button>
+        <button>Search</button>
       </header>
       <nav id="Shop_navbar">
         <ul className="nav-list">
@@ -117,11 +145,10 @@ const Shop = () => {
           </li>
         </ul>
       </nav>
-
       <main className="main">
         <h2 className="section-title">{clickedText}</h2>
         <section className="product-list">
-          {filterByCategory === "즐겨찾기"
+          {filterByCategory === "favorites"
             ? getFavoriteProducts().map((product) => (
                 <ProductCard
                   key={product.id}

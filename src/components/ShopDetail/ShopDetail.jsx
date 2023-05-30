@@ -8,8 +8,6 @@ const ShopDetail = () => {
 
   return (
     <div>
-      {/* 상세 페이지 내용 */}
-      {/* <h2>상품 ID: {productId}</h2> */}
       <section>
         <img src={product.image} alt={product.title} />
         <h3>{product.title}</h3>
