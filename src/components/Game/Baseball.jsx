@@ -9,13 +9,14 @@ const generateAnswer = () => {
       digits.push(randomDigit);
     }
   }
-  console.log(digits);
+  // console.log(digits);
   return digits.join("");
 };
 
 const Baseball = () => {
   const [answer, setAnswer] = useState(generateAnswer());
   const [guess, setGuess] = useState("");
+  const [attempts, setAttempts] = useState([]);
   const [result, setResult] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
 
@@ -41,12 +42,21 @@ const Baseball = () => {
     const { strike, ball } = checkGuess(guess, answer);
     setResult(`Strike: ${strike}, Ball: ${ball}`);
     setGuess("");
+    setAttempts((prevAttempts) => [
+      ...prevAttempts,
+      { guess, result: `Strike: ${strike}, Ball: ${ball}` },
+    ]);
 
     if (strike === 4) {
-      if (window.confirm("홈런! 게임을 다시 시작하시겠습니까?")) {
+      const homeRunMessage = `홈런! ${attempts.length + 1}번째 홈런입니다!`;
+      if (window.confirm(`${homeRunMessage} 게임을 다시 시작하시겠습니까?`)) {
         window.location.reload();
       }
     }
+  };
+
+  const handleRestart = () => {
+    window.location.reload();
   };
 
   const handleAnswerClick = () => {
@@ -55,8 +65,10 @@ const Baseball = () => {
 
   return (
     <div>
-      <Link to="/game">뒤로</Link>
-      <h1>Number Baseball Game</h1>
+      <header>
+        <Link to="/game">뒤로</Link>
+        <h1>Baseball Game</h1>
+      </header>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -67,8 +79,14 @@ const Baseball = () => {
           required
         />
         <button type="submit">Guess</button>
+        <button type="button" onClick={handleRestart}>Restart</button>
       </form>
       <p>{result}</p>
+      <div>
+        {attempts.map((attempt, index) => (
+          <p key={index}>{`${index + 1}번째 시도: ${attempt.guess} - ${attempt.result}`}</p>
+        ))}
+      </div>
       <div className="product-card" onClick={handleAnswerClick}>
         <p>답을 확인하시겠습니까?</p>
         {showAnswer && <p>{answer}</p>}
