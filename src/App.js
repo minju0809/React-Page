@@ -5,9 +5,11 @@ import Notice from "./components/Notice";
 import Photo from "./components/Photo";
 import Gym from "./components/Gym";
 import Shop from "./components/Shop";
-import Review from "./components/Review";
-import MyPage from "./components/MyPage";
 import ShopDetail from "./components/ShopDetail/ShopDetail"
+import Review from "./components/Review";
+import Game from "./components/Game";
+import Baseball from "./components/Game/Baseball";
+import MyPage from "./components/MyPage";
 // import Favorites from "./components/ShopDetail/ShopFavorites"
 
 const App = () => {
@@ -20,8 +22,9 @@ const App = () => {
         <Route path="/gym" element={<Gym />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/products/:productId" element={<ShopDetail />} />
-        {/* <Route path="/shop/favorites" element={<Favorites />} /> */}
         <Route path="/review" element={<Review />} />
+        <Route path="/game" element={<Game />} />
+        <Route path="/game/baseball" element={<Baseball />} />
         <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </Router>

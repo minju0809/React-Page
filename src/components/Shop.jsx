@@ -10,11 +10,6 @@ const Shop = () => {
   const [filterByCategory, setFilterByCategory] = useState("전체상품"); // 카테고리 필터 상태
   const [favorites, setFavorites] = useState([]); // 즐겨찾기 목록을 저장할 배열
 
-  // useEffect(() => {
-  //   // 즐겨찾기 목록 가져오기
-  //   fetchFavorites();
-  // }, []);
-
   const handleClick = (text) => {
     setClickedText(text); // 클릭한 글자를 상태에 저장
   };
@@ -44,6 +39,28 @@ const Shop = () => {
     });
   };
 
+// // 로컬 스토리지 사용
+// const handleFavorite = (productId) => {
+//   setFavorites((prevFavorites) => {
+//     const isFavorite = prevFavorites.includes(productId);
+//     let updatedFavorites;
+
+//     if (isFavorite) {
+//       // 이미 즐겨찾기에 있는 상품인 경우 제거
+//       updatedFavorites = prevFavorites.filter((id) => id !== productId);
+//     } else {
+//       // 현재 즐겨찾기에 없는 상품인 경우 추가
+//       updatedFavorites = [...prevFavorites, productId];
+//     }
+
+//     setFavorites(updatedFavorites);
+
+//     // 로컬 스토리지에 즐겨찾기 목록 저장
+//     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+//   });
+// };
+
+// 백엔드 사용 시 //
   // const handleFavorite = async (productId) => {
   //   const isFavorite = favorites.includes(productId);
   //   let updatedFavorites;
@@ -107,6 +124,15 @@ const Shop = () => {
 
     return filteredProducts;
   };
+
+// // 로컬 스토리지
+//   useEffect(() => {
+//     // 로컬 스토리지에서 이전에 저장한 즐겨찾기 목록 가져오기
+//     const storedFavorites = localStorage.getItem("favorites");
+//     if (storedFavorites) {
+//       setFavorites(JSON.parse(storedFavorites));
+//     }
+//   }, []);
 
   return (
     <div>

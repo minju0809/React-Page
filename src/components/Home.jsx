@@ -32,6 +32,9 @@ const Home = () => {
               <Link to="/review">리뷰</Link>
             </li>
             <li>
+              <Link to="/game">게임</Link>
+            </li>
+            <li>
               <Link to="/mypage">마이페이지</Link>
             </li>
           </ul>
