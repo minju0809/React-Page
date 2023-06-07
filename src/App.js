@@ -9,6 +9,7 @@ import ShopDetail from "./components/ShopDetail/ShopDetail"
 import Review from "./components/Review";
 import Game from "./components/Game";
 import Baseball from "./components/Game/Baseball";
+import Merge from "./components/Game/Merge";
 import MyPage from "./components/MyPage";
 // import Favorites from "./components/ShopDetail/ShopFavorites"
 
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/review" element={<Review />} />
         <Route path="/game" element={<Game />} />
         <Route path="/game/baseball" element={<Baseball />} />
+        <Route path="/game/merge" element={<Merge />} />
         <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </Router>

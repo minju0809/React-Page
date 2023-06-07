@@ -12,6 +12,8 @@ const Game = () => {
         <h2>게임</h2>
       </header>
       <Link to="/game/baseball">Baseball</Link>
+      <br></br>
+      <Link to="/game/merge">Merge</Link>
     </div>
   );
 };
