@@ -120,6 +120,38 @@ footer {
 }
 
 /* ////////////////// Game ////////////////// */
+/* Baseball */
+.baseball-container {
+  text-align: center;
+}
+
+
+.baseball-timer {
+  padding: 8px;
+  margin: 12px;
+  display: inline-block;
+  border: 2px dotted var(--main-color);
+  border-radius: 8px;
+}
+
+.baseball-product-card {
+  margin-top: 20px;
+  padding: 0 12px;
+  display: inline-block;
+
+  /* width: 50%; */
+  /* margin: 0 auto; 좌우 여백을 자동으로 조정하여 중앙에 위치하게 합니다. */
+  /* 그림자 효과 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.baseball-product-card:hover {
+  /* 마우스를 올렸을 때의 스타일 변경 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
 .game-container {
   display: flex;
   flex-direction: column;

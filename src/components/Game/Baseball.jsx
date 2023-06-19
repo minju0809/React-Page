@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 const generateAnswer = () => {
@@ -9,8 +9,32 @@ const generateAnswer = () => {
       digits.push(randomDigit);
     }
   }
-  // console.log(digits);
   return digits.join("");
+};
+
+const checkGuess = (guess, answer) => {
+  let strike = 0;
+  let ball = 0;
+  let out = 0;
+  for (let i = 0; i < guess.length; i++) {
+    if (guess[i] === answer[i]) {
+      strike++;
+    } else if (answer.includes(guess[i])) {
+      ball++;
+    } else {
+      out++;
+    }
+  }
+  return { strike, ball, out };
+};
+
+const formatTime = (time) => {
+  const minutes = Math.floor(time / 60000);
+  const seconds = Math.floor((time / 1000) % 60);
+  const milliseconds = Math.floor((time % 1000) / 10);
+  return `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}:${milliseconds.toString().padStart(2, "0")}`;
 };
 
 const Baseball = () => {
@@ -19,49 +43,84 @@ const Baseball = () => {
   const [attempts, setAttempts] = useState([]);
   const [result, setResult] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
+  const [error, setError] = useState("");
+  const [timer, setTimer] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const timerRef = useRef(null);
 
-  const handleGuessChange = (event) => {
-    setGuess(event.target.value);
-  };
-
-  const checkGuess = (guess, answer) => {
-    let strike = 0;
-    let ball = 0;
-    for (let i = 0; i < guess.length; i++) {
-      if (guess[i] === answer[i]) {
-        strike++;
-      } else if (answer.includes(guess[i])) {
-        ball++;
+  useEffect(() => {
+    if (gameOver) {
+      clearInterval(timerRef.current);
+      const homeRunMessage = `홈런! ${attempts.length + 1}번째 홈런입니다!`;
+      if (window.confirm(`${homeRunMessage} 게임을 다시 시작하시겠습니까?`)) {
+        handleRestart();
       }
     }
-    return { strike, ball };
+  }, [gameOver]);
+
+  const handleStart = () => {
+    setAnswer(generateAnswer());
+    setGuess("");
+    setAttempts([]);
+    setResult("");
+    setShowAnswer(false);
+    setError("");
+    setTimer(0);
+    setGameOver(false);
+    setGameStarted(true);
+
+    timerRef.current = setInterval(() => {
+      setTimer((prevTimer) => prevTimer + 10);
+    }, 10);
+  };
+
+  const handleGuessChange = (event) => {
+    if (gameStarted) {
+      setGuess(event.target.value);
+      setError("");
+    }
+  };
+
+  const checkDuplicateDigits = (input) => {
+    const uniqueDigits = [...new Set(input)];
+    return uniqueDigits.length === input.length;
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { strike, ball } = checkGuess(guess, answer);
-    setResult(`Strike: ${strike}, Ball: ${ball}`);
+
+    if (!checkDuplicateDigits(guess)) {
+      setError(<span style={{ color: "red" }}>중복되지 않는 숫자를 입력해주세요.</span>);
+      return;
+    }
+
+    const { strike, ball, out } = checkGuess(guess, answer);
+    setResult(`Strike: ${strike}, Ball: ${ball}, Out: ${out}`);
     setGuess("");
     setAttempts((prevAttempts) => [
       ...prevAttempts,
-      { guess, result: `Strike: ${strike}, Ball: ${ball}` },
+      { guess, result: `Strike: ${strike}, Ball: ${ball}, Out: ${out}` },
     ]);
 
     if (strike === 4) {
-      const homeRunMessage = `홈런! ${attempts.length + 1}번째 홈런입니다!`;
-      if (window.confirm(`${homeRunMessage} 게임을 다시 시작하시겠습니까?`)) {
-        window.location.reload();
-      }
+      setGameOver(true);
     }
   };
 
   const handleRestart = () => {
-    window.location.reload();
+    handleStart();
   };
 
   const handleAnswerClick = () => {
     setShowAnswer(!showAnswer);
   };
+
+  useEffect(() => {
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, []);
 
   return (
     <div>
@@ -69,27 +128,49 @@ const Baseball = () => {
         <Link to="/game">뒤로</Link>
         <h1>Baseball Game</h1>
       </header>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          pattern="[0-9]{4}"
-          maxLength="4"
-          value={guess}
-          onChange={handleGuessChange}
-          required
-        />
-        <button type="submit">Guess</button>
-        <button type="button" onClick={handleRestart}>Restart</button>
-      </form>
-      <p>{result}</p>
-      <div>
-        {attempts.map((attempt, index) => (
-          <p key={index}>{`${index + 1}번째 시도: ${attempt.guess} - ${attempt.result}`}</p>
-        ))}
-      </div>
-      <div className="product-card" onClick={handleAnswerClick}>
-        <p>답을 확인하시겠습니까?</p>
-        {showAnswer && <p>{answer}</p>}
+      <div className="baseball-container">
+        <form className="baseball-form" onSubmit={handleSubmit}>
+          <button
+            type="button"
+            onClick={handleStart}
+            disabled={gameStarted}
+          >
+            Start
+          </button>
+          <p className="baseball-timer">타이머: {formatTime(timer)}</p>
+          <br></br>
+          <input
+            type="text"
+            pattern="[0-9]{4}"
+            maxLength="4"
+            value={guess}
+            onChange={handleGuessChange}
+            required
+            disabled={!gameStarted}
+          />
+          <button type="submit" disabled={!gameStarted}>
+            Guess
+          </button>
+          <button
+            type="button"
+            onClick={handleRestart}
+            disabled={!gameStarted}
+          >
+            Restart
+          </button>
+          {error && <p>{error}</p>}
+        </form>
+        <div className="baseball-attempts">
+          {attempts.map((attempt, index) => (
+            <p key={index}>{`${index + 1}번째 시도: ${attempt.guess} - ${
+              attempt.result
+            }`}</p>
+          ))}
+        </div>
+        <div className="baseball-product-card" onClick={handleAnswerClick}>
+          <p>답을 확인하시겠습니까?</p>
+          {showAnswer && <p>{answer}</p>}
+        </div>
       </div>
     </div>
   );
