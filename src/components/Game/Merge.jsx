@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../../App.css";
+
+const formatTime = (time) => {
+  const minutes = Math.floor(time / 60000);
+  const seconds = Math.floor((time / 1000) % 60);
+  const milliseconds = Math.floor((time % 1000) / 10);
+  return `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}:${milliseconds.toString().padStart(2, "0")}`;
+};
 
 const Merge = () => {
   const width = 7;
@@ -13,6 +22,13 @@ const Merge = () => {
   const [timer, setTimer] = useState(0);
   const [timerStarted, setTimerStarted] = useState(false);
   const [stoppedTime, setStoppedTime] = useState(0);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      clearInterval(timerRef.current);
+    };
+  }, []);
 
   const handleAddNumber = () => {
     const emptyCells = [];
@@ -35,6 +51,10 @@ const Merge = () => {
 
       if (!timerStarted) {
         setTimerStarted(true);
+        setTimer(0);
+        timerRef.current = setInterval(() => {
+          setTimer((prevTimer) => prevTimer + 10);
+        }, 10);
       }
     }
   };
@@ -69,35 +89,13 @@ const Merge = () => {
     setPopupVisible(false);
   };
 
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60000).toString().padStart(2, '0');
-    const seconds = Math.floor((time % 60000) / 1000).toString().padStart(2, '0');
-    const milliseconds = (time % 1000).toString().padStart(3, '0');
-    return `${minutes}:${seconds}:${milliseconds}`;
-  };
-
   useEffect(() => {
-    let intervalId = null;
-
-    if (timerStarted && !popupVisible && !grid.flat().includes(5)) {
-      intervalId = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 100);
-      }, 100);
-    } else {
-      clearInterval(intervalId);
-
-      if (timerStarted && grid.flat().includes(5)) {
-        setTimerStarted(false);
-        setStoppedTime((prevTimer) => prevTimer + timer);
-      }
-
-      setTimer(0);
+    if (timerStarted && grid.flat().includes(5)) {
+      clearInterval(timerRef.current);
+      setTimerStarted(false);
+      setStoppedTime((prevStoppedTime) => prevStoppedTime + timer);
     }
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [timerStarted, popupVisible, grid, timer]);
+  }, [timerStarted, grid, timer]);
 
   return (
     <div>
@@ -107,7 +105,7 @@ const Merge = () => {
       </header>
       <div className="merge-container">
         <button onClick={handleAddNumber}>추가</button>
-        <div className="timer">{formatTime(timerStarted ? timer : stoppedTime)}</div>
+        <p className="merge-timer">타이머: {formatTime(timer)}</p>
         {grid.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
             {row.map((cell, colIndex) => (

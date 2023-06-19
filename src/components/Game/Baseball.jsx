@@ -138,6 +138,13 @@ const Baseball = () => {
             Start
           </button>
           <p className="baseball-timer">타이머: {formatTime(timer)}</p>
+          <button
+            type="button"
+            onClick={handleRestart}
+            disabled={!gameStarted}
+          >
+            Restart
+          </button>
           <br></br>
           <input
             type="text"
@@ -150,13 +157,6 @@ const Baseball = () => {
           />
           <button type="submit" disabled={!gameStarted}>
             Guess
-          </button>
-          <button
-            type="button"
-            onClick={handleRestart}
-            disabled={!gameStarted}
-          >
-            Restart
           </button>
           {error && <p>{error}</p>}
         </form>
