@@ -48,6 +48,7 @@ const Baseball = () => {
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedNumbers, setSelectedNumbers] = useState([]);
+  const [displayedNumber, setDisplayedNumber] = useState([0, 0, 0, 0]);
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -131,6 +132,12 @@ const Baseball = () => {
     }
   };
 
+  const handleNumberBoradClick = (index) => {
+    const newDisplayedNumber = [...displayedNumber];
+    newDisplayedNumber[index] = (newDisplayedNumber[index] + 1) % 10;
+    setDisplayedNumber(newDisplayedNumber);
+  };
+
   useEffect(() => {
     return () => {
       clearInterval(timerRef.current);
@@ -182,6 +189,18 @@ const Baseball = () => {
                 selectedNumbers.includes(number) ? "selected" : ""
               }`}
               onClick={() => handleNumberClick(number)}
+            >
+              {number}
+            </span>
+          ))}
+        </div>
+        <br></br>
+        <div className="baseball-numberBorad-container">
+          {displayedNumber.map((number, index) => (
+            <span
+              key={index}
+              className={`baseball-number`}
+              onClick={() => handleNumberBoradClick(index)}
             >
               {number}
             </span>
