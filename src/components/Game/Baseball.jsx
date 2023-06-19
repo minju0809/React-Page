@@ -47,6 +47,7 @@ const Baseball = () => {
   const [timer, setTimer] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [selectedNumbers, setSelectedNumbers] = useState([]);
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -91,7 +92,11 @@ const Baseball = () => {
     event.preventDefault();
 
     if (!checkDuplicateDigits(guess)) {
-      setError(<span style={{ color: "red" }}>중복되지 않는 숫자를 입력해주세요.</span>);
+      setError(
+        <span style={{ color: "red" }}>
+          ! 중복되지 않는 숫자를 입력해주세요.
+        </span>
+      );
       return;
     }
 
@@ -116,6 +121,16 @@ const Baseball = () => {
     setShowAnswer(!showAnswer);
   };
 
+  const handleNumberClick = (number) => {
+    if (selectedNumbers.includes(number)) {
+      setSelectedNumbers((prevNumbers) =>
+        prevNumbers.filter((num) => num !== number)
+      );
+    } else {
+      setSelectedNumbers((prevNumbers) => [...prevNumbers, number]);
+    }
+  };
+
   useEffect(() => {
     return () => {
       clearInterval(timerRef.current);
@@ -130,19 +145,11 @@ const Baseball = () => {
       </header>
       <div className="baseball-container">
         <form className="baseball-form" onSubmit={handleSubmit}>
-          <button
-            type="button"
-            onClick={handleStart}
-            disabled={gameStarted}
-          >
+          <button type="button" onClick={handleStart} disabled={gameStarted}>
             Start
           </button>
           <p className="baseball-timer">타이머: {formatTime(timer)}</p>
-          <button
-            type="button"
-            onClick={handleRestart}
-            disabled={!gameStarted}
-          >
+          <button type="button" onClick={handleRestart} disabled={!gameStarted}>
             Restart
           </button>
           <br></br>
@@ -167,6 +174,20 @@ const Baseball = () => {
             }`}</p>
           ))}
         </div>
+        <div className="baseball-number-container">
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
+            <span
+              key={number}
+              className={`baseball-number ${
+                selectedNumbers.includes(number) ? "selected" : ""
+              }`}
+              onClick={() => handleNumberClick(number)}
+            >
+              {number}
+            </span>
+          ))}
+        </div>
+        <br></br>
         <div className="baseball-product-card" onClick={handleAnswerClick}>
           <p>답을 확인하시겠습니까?</p>
           {showAnswer && <p>{answer}</p>}

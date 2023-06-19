@@ -39,7 +39,7 @@ button {
   background-color: var(--main-color);
   border: 2px solid var(--section-color);
   border-radius: 12px;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 button:hover {
@@ -140,7 +140,6 @@ footer {
   text-align: center;
 }
 
-
 .baseball-timer {
   padding: 8px;
   margin: 12px;
@@ -149,13 +148,35 @@ footer {
   border-radius: 8px;
 }
 
+.baseball-number-container {
+  display: inline-block;
+  padding: 16px;
+  border: 2px solid var(--section-color);
+  border-radius: 8px;
+}
+
+.baseball-number-container span {
+  border: 1px solid var(--main-color);
+  border-radius: 50%;
+  padding: 8px 12px;
+  margin: 4px;
+  /* 그림자 효과 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.baseball-number {
+  text-decoration: none;
+}
+
+.baseball-number.selected {
+  text-decoration: line-through;
+  color: red;
+}
+
 .baseball-product-card {
   margin-top: 20px;
   padding: 0 12px;
   display: inline-block;
-
-  /* width: 50%; */
-  /* margin: 0 auto; 좌우 여백을 자동으로 조정하여 중앙에 위치하게 합니다. */
   /* 그림자 효과 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease-in-out;
@@ -165,7 +186,6 @@ footer {
   /* 마우스를 올렸을 때의 스타일 변경 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
 
 .game-container {
   display: flex;
@@ -191,7 +211,6 @@ footer {
   height: 30px;
   background-color: blue;
 }
-
 
 /* 반응형 스타일 */
 @media (min-width: 769px) {
