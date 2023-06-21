@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// import axios from "axios";
 import shopData from "../data/shopData";
 import ProductCard from "./ProductCard";
 
@@ -8,6 +7,7 @@ const Shop = () => {
   const [clickedText, setClickedText] = useState(""); // 클릭한 글자 상태
   const [showAllItem, setShowAllItem] = useState(false); // 첫 화면에서는 전체 상품 보이도록 설정
   const [filterByCategory, setFilterByCategory] = useState("전체상품"); // 카테고리 필터 상태
+  const [favorite, setFavorite] = useState("");
   const [favorites, setFavorites] = useState([]); // 즐겨찾기 목록을 저장할 배열
 
   const handleClick = (text) => {
@@ -25,75 +25,6 @@ const Shop = () => {
       setFilterByCategory(category);
     }
   };
-
-  const handleFavorite = (productId) => {
-    setFavorites((prevFavorites) => {
-      const isFavorite = prevFavorites.includes(productId);
-      if (isFavorite) {
-        // 이미 즐겨찾기에 있는 상품인 경우 제거
-        return prevFavorites.filter((id) => id !== productId);
-      } else {
-        // 현재 즐겨찾기에 없는 상품인 경우 추가
-        return [...prevFavorites, productId];
-      }
-    });
-  };
-
-// // 로컬 스토리지 사용
-// const handleFavorite = (productId) => {
-//   setFavorites((prevFavorites) => {
-//     const isFavorite = prevFavorites.includes(productId);
-//     let updatedFavorites;
-
-//     if (isFavorite) {
-//       // 이미 즐겨찾기에 있는 상품인 경우 제거
-//       updatedFavorites = prevFavorites.filter((id) => id !== productId);
-//     } else {
-//       // 현재 즐겨찾기에 없는 상품인 경우 추가
-//       updatedFavorites = [...prevFavorites, productId];
-//     }
-
-//     setFavorites(updatedFavorites);
-
-//     // 로컬 스토리지에 즐겨찾기 목록 저장
-//     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-//   });
-// };
-
-// 백엔드 사용 시 //
-  // const handleFavorite = async (productId) => {
-  //   const isFavorite = favorites.includes(productId);
-  //   let updatedFavorites;
-
-  //   if (isFavorite) {
-  //     // 이미 즐겨찾기에 있는 상품인 경우 제거
-  //     updatedFavorites = favorites.filter((id) => id !== productId);
-  //   } else {
-  //     // 현재 즐겨찾기에 없는 상품인 경우 추가
-  //     updatedFavorites = [...favorites, productId];
-  //   }
-
-  //   setFavorites(updatedFavorites);
-
-  //   try {
-  //     // 즐겨찾기 목록 업데이트
-  //     await axios.post("/api/favorites", { favorites: updatedFavorites });
-  //   } catch (error) {
-  //     console.error("Failed to update favorites:", error);
-  //   }
-  // };
-
-  // const fetchFavorites = async () => {
-  //   try {
-  //     // 서버에서 즐겨찾기 목록 가져오기
-  //     const response = await axios.get("/api/favorites");
-  //     const favoritesData = response.data.favorites;
-  //     setFavorites(favoritesData);
-  //   } catch (error) {
-  //     console.error("Failed to fetch favorites:", error);
-  //   }
-  // };
-
 
   // 카테고리와 필터 조건을 정의한 객체
   const categoryFilters = {
@@ -125,14 +56,30 @@ const Shop = () => {
     return filteredProducts;
   };
 
-// // 로컬 스토리지
-//   useEffect(() => {
-//     // 로컬 스토리지에서 이전에 저장한 즐겨찾기 목록 가져오기
-//     const storedFavorites = localStorage.getItem("favorites");
-//     if (storedFavorites) {
-//       setFavorites(JSON.parse(storedFavorites));
-//     }
-//   }, []);
+  const handleFavorite = (productId) => {
+    setFavorites((prevFavorites) => {
+      const isFavorite = prevFavorites.includes(productId);
+      if (isFavorite) {
+        // 이미 즐겨찾기에 있는 상품인 경우 제거
+        const newFavorites = prevFavorites.filter((id) => id !== productId);
+        localStorage.setItem("favorites", JSON.stringify(newFavorites));
+        return newFavorites;
+      } else {
+        // 현재 즐겨찾기에 없는 상품인 경우 추가
+        const newFavorites = [...prevFavorites, productId];
+        localStorage.setItem("favorites", JSON.stringify(newFavorites));
+        return newFavorites;
+      }
+    });
+    setFavorite("");
+  };
+
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favorites");
+    if (storedFavorites) {
+      setFavorites(JSON.parse(storedFavorites));
+    }
+  }, []);
 
   return (
     <div>

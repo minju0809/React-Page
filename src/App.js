@@ -11,7 +11,6 @@ import Game from "./components/Game";
 import Baseball from "./components/Game/Baseball";
 import Merge from "./components/Game/Merge";
 import MyPage from "./components/MyPage";
-// import Favorites from "./components/ShopDetail/ShopFavorites"
 
 const App = () => {
   return (
